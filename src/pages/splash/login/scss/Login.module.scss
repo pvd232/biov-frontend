@@ -1,0 +1,21 @@
+.pageContainer {
+  display: flex;
+  justify-content: center;
+  .loginCard {
+    border-radius: 5px;
+    box-shadow: 0 0 5px 1px #e6e6e6;
+    padding-bottom: 80px;
+    max-width: 600px;
+    justify-content: center;
+    row-gap: 3vh;
+    .loginContent {
+      width: 80%;
+      display: flex;
+      justify-content: center;
+      padding-top: 40px;
+      padding-left: 40px;
+      padding-right: 40px;
+      row-gap: 3vh;
+    }
+  }
+}

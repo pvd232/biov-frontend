@@ -1,0 +1,9 @@
+@use "../../../../../static/scss/index.scss" as theme;
+@use "./Links.module.scss" as links;
+
+.splashLinksContainer {
+  @include links.container;
+  @include theme.xs {
+    justify-content: center;
+  }
+}

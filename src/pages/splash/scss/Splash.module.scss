@@ -1,0 +1,7 @@
+@use "../../../static/scss/index.scss" as theme;
+
+$contentSubHeaderFontSize: 1.1rem;
+.pageContainer {
+  justify-content: center;
+  width: 100%;
+}
