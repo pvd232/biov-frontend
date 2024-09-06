@@ -38,7 +38,6 @@ export const Questionnaire: React.FC = () => {
     const questionId = questionnaire!.questions[currentQuestionIndex].id;
     for (let response of prevQuestionResponses.questionResponses) {
       if (response.questionId === questionId) {
-        console.log("response", response);
         switch (response.type) {
           case QuestionCategory.MultipleChoice:
             setAnswers((prevAnswers) => [
@@ -54,8 +53,6 @@ export const Questionnaire: React.FC = () => {
             ]);
             break;
           case QuestionCategory.MultipleChoiceSelectAll:
-            console.log("response", response);
-
             setAnswers((prevAnswers) => [
               ...prevAnswers,
               {
