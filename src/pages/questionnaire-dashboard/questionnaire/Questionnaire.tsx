@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Container,
   Typography,
@@ -34,61 +34,6 @@ export const Questionnaire: React.FC = () => {
   const location = useLocation();
   const questionnaire = location.state?.questionnaire;
 
-  useEffect(() => {
-    const questionId = questionnaire!.questions[currentQuestionIndex].id;
-    for (let response of prevQuestionResponses.questionResponses) {
-      if (response.questionId === questionId) {
-        switch (response.type) {
-          case QuestionCategory.MultipleChoice:
-            setAnswers((prevAnswers) => [
-              ...prevAnswers,
-              {
-                userId: userId,
-                questionId: questionId,
-                type: QuestionCategory.MultipleChoice,
-                singleOptionId: response.singleOptionId,
-                multiOptionIds: null,
-                shortAnswer: null,
-              },
-            ]);
-            break;
-          case QuestionCategory.MultipleChoiceSelectAll:
-            setAnswers((prevAnswers) => [
-              ...prevAnswers,
-              {
-                userId: userId,
-                questionId: questionId,
-                type: QuestionCategory.MultipleChoice,
-                singleOptionId: null,
-                multiOptionIds: response.multiOptionIds,
-                shortAnswer: null,
-              },
-            ]);
-            break;
-          case QuestionCategory.ShortAnswer:
-            setAnswers((prevAnswers) => [
-              ...prevAnswers,
-              {
-                userId: userId,
-                questionId: questionId,
-                type: QuestionCategory.MultipleChoice,
-                singleOptionId: null,
-                multiOptionIds: null,
-                shortAnswer: response.shortAnswer,
-              },
-            ]);
-            break;
-        }
-      }
-    }
-  }, [
-    currentQuestionIndex,
-    questionnaire,
-    userId,
-    prevQuestionResponses,
-    navigate,
-  ]);
-
   const handleAnswerChange = (
     questionId: number,
     answerType: QuestionCategory,
@@ -101,8 +46,8 @@ export const Questionnaire: React.FC = () => {
         (answer) => answer.questionId === questionId
       );
 
-      // Clone the answers to avoid mutating state directly
-      const updatedAnswers = [...prevAnswers];
+      // Clone the answers to avoid mutating state directly, will return empty array if there are no answers
+      const updatedAnswers: QuestionResponse[] = [...prevAnswers];
 
       // Handle multi select questions
       if (
@@ -173,7 +118,6 @@ export const Questionnaire: React.FC = () => {
           });
         }
       }
-
       return updatedAnswers;
     });
     // Reset error if there was one
@@ -220,7 +164,14 @@ export const Questionnaire: React.FC = () => {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
   };
 
+  const getPrevAnswer = (questionId: number) =>
+    prevQuestionResponses.questionResponses.find(
+      (prevResponse: QuestionResponse) => prevResponse.questionId === questionId
+    );
+
   const currentQuestion = questionnaire!.questions[currentQuestionIndex];
+  const prevAnswer = getPrevAnswer(currentQuestion.id);
+
   const progress =
     ((currentQuestionIndex + 1) / questionnaire!.questions.length) * 100;
 
@@ -229,7 +180,6 @@ export const Questionnaire: React.FC = () => {
       navigate("/questionnaire-home");
     });
   };
-
   return (
     <Container>
       <Typography variant="h4">Questionnaire: {questionnaire!.name}</Typography>
@@ -240,7 +190,11 @@ export const Questionnaire: React.FC = () => {
         <Box mt={2}>
           {currentQuestion.type === QuestionCategory.MultipleChoice ? (
             <RadioGroup
-              value={answers[currentQuestionIndex]?.singleOptionId || ""}
+              value={
+                prevAnswer?.singleOptionId ||
+                answers[currentQuestionIndex]?.singleOptionId ||
+                ""
+              }
               onChange={(e) =>
                 handleAnswerChange(
                   currentQuestion.id,
@@ -268,9 +222,11 @@ export const Questionnaire: React.FC = () => {
                 control={
                   <Checkbox
                     checked={
+                      prevAnswer?.multiOptionIds?.includes(option.id) ||
                       answers[currentQuestionIndex]?.multiOptionIds?.includes(
                         option.id
-                      ) || false
+                      ) ||
+                      false
                     }
                     onChange={() =>
                       handleAnswerChange(
@@ -290,7 +246,11 @@ export const Questionnaire: React.FC = () => {
             <TextField
               variant="outlined"
               fullWidth
-              value={answers[currentQuestionIndex]?.shortAnswer || ""}
+              value={
+                prevAnswer?.shortAnswer ||
+                answers[currentQuestionIndex]?.shortAnswer ||
+                ""
+              }
               onChange={(e) => {
                 handleAnswerChange(
                   currentQuestion.id,
