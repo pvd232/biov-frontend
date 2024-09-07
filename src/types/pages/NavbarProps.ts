@@ -1,7 +1,4 @@
-import { ReactElement, ReactNode } from "react";
+import { ReactNode } from "react";
 export interface NavbarProps {
   childComponent: ReactNode;
-  links: ReactElement;
-
-  homeUrl: string;
 }

@@ -8,11 +8,12 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { useQuestionResponses } from "../../hooks/useQuestionResponses";
+import { useQuestionnaireStats } from "../../hooks/useQuestionnaireStats";
 import { QuestionResponse } from "../../helpers/QuestionResponse";
+import { QuestionnaireStat } from "../../helpers/QuestionnaireStat";
 
 export const AdminPanel = () => {
-  const { error, loading, questionResponses } = useQuestionResponses();
+  const { error, loading, questionnaireStats } = useQuestionnaireStats();
   if (error) return <h1>Error in retrieving question responses</h1>;
   else if (loading) return <CircularProgress></CircularProgress>;
 
@@ -27,9 +28,9 @@ export const AdminPanel = () => {
               <TableCell>Completed Questionnaires</TableCell>
             </TableRow>
           </TableHead>
-          {questionResponses.map((questionResponse: QuestionResponse) => (
+          {questionnaireStats.map((questionnaireStat: QuestionnaireStat) => (
             <TableRow>
-              <TableCell>{questionResponse.userId}</TableCell>
+              <TableCell>{questionnaireStat.userId}</TableCell>
               <TableCell>{}</TableCell>
             </TableRow>
           ))}

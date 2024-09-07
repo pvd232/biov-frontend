@@ -5,12 +5,17 @@ import { CustomTextField } from "../../shared/custom-text-field/CustomTextField"
 import { BlackButton } from "../../shared/button/BlackButton";
 import { Container, Typography } from "@mui/material";
 import { useUser } from "../../../hooks/useUser";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { User } from "../../../types/domains/User";
 import { APIClient } from "../../../helpers/APIC";
+
+type LoginParams = {
+  role: "admin" | undefined;
+};
 export const Login: React.FC = () => {
   const { login } = useUser();
-
+  const { role } = useParams<LoginParams>();
+  console.log("role", role);
   // State for the form inputs and errors
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -28,14 +33,21 @@ export const Login: React.FC = () => {
     }
 
     // If validation passes, log the user in
-    const user: User = { id: trimmedUsername, password: trimmedPassword };
+    const user: User = {
+      id: trimmedUsername,
+      password: trimmedPassword,
+      role: role ?? "non-admin",
+    };
     APIClient.authenticateUser(user).then((response) => {
       if (!response) {
         setError("Invalid username or password.");
         return;
-      } else {
+      } else if (user.role === "non-admin") {
         login(user); // Set the user in context after a successful login
         navigate("/questionnaire-home");
+      } else if (user.role === "admin") {
+        login(user); // Set the user in context after a successful login
+        navigate("/admin-home");
       }
     });
   };

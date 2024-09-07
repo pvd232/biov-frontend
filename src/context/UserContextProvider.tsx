@@ -14,10 +14,12 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({
   children,
 }) => {
   const [userId, setUserId] = useState<string | null>(null);
+  const [role, setRole] = useState<"admin" | "non-admin">("non-admin");
 
   const login = (user: User) => {
     logout();
     setUserId(user.id);
+    setRole(user.role);
     new UserSession().saveUserId(user.id);
   };
 
@@ -34,7 +36,7 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({
   }, [userId]);
 
   return (
-    <UserContext.Provider value={{ userId, login, logout }}>
+    <UserContext.Provider value={{ userId, role, setRole, login, logout }}>
       {children}
     </UserContext.Provider>
   );

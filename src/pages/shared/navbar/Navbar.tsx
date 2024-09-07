@@ -10,7 +10,7 @@ import navbar from "./scss/Navbar.module.scss";
 export const Navbar = (props: NavbarProps) => {
   const navigate = useNavigate();
   const handleClickLogo = () => {
-    navigate(props.homeUrl);
+    navigate("/");
   };
   return (
     <Grid container className={navbar.viewContainer}>
@@ -29,9 +29,6 @@ export const Navbar = (props: NavbarProps) => {
                         Bioverse
                       </Typography>
                     </Grid>
-                    {/* <Grid sx={{ marginLeft: "auto", marginRight: "5vw" }}>
-                      {props.links}
-                    </Grid> */}
                   </Grid>
                 </Grid>
               </Toolbar>
