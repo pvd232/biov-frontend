@@ -11,7 +11,7 @@ import {
   Box,
   TextField,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { QuestionCategory } from "../../../types/enums/QuestionCategory";
 import { APIClient } from "../../../helpers/APIC";
 import { QuestionResponse } from "../../../helpers/QuestionResponse";
@@ -20,11 +20,15 @@ import { QuestionOption } from "../../../types/domains/QuestionOption";
 import { useNavigate } from "react-router-dom";
 import { useQuestionResponses } from "../../../hooks/useQuestionResponses";
 
+type QuestionnaireParams = {
+  id: string;
+};
+
 export const Questionnaire: React.FC = () => {
   const navigate = useNavigate();
-
+  const { id } = useParams<QuestionnaireParams>();
   const userId = useUser().userId!;
-  const prevQuestionResponses = useQuestionResponses();
+  const prevResponses = useQuestionResponses().questionResponses;
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<QuestionResponse[]>([]);
@@ -73,6 +77,7 @@ export const Questionnaire: React.FC = () => {
           updatedAnswers.push({
             userId: userId,
             questionId: questionId,
+            questionnaireId: Number(id),
             type: answerType,
             singleOptionId: null,
             multiOptionIds: [multiOptionId],
@@ -92,6 +97,7 @@ export const Questionnaire: React.FC = () => {
           updatedAnswers.push({
             userId: userId,
             questionId: questionId,
+            questionnaireId: Number(id),
             type: answerType,
             singleOptionId: singleOptionId,
             multiOptionIds: null,
@@ -111,6 +117,7 @@ export const Questionnaire: React.FC = () => {
           updatedAnswers.push({
             userId: userId,
             questionId: questionId,
+            questionnaireId: Number(id),
             type: answerType,
             singleOptionId: null,
             multiOptionIds: null,
@@ -154,6 +161,10 @@ export const Questionnaire: React.FC = () => {
     )
       return; // Prevent moving to the next question if validation fails
 
+    // If the user did not change their answer, add it to the answers array
+    if (answers.length === currentQuestionIndex && prevAnswer)
+      setAnswers((prev) => [...prev, prevAnswer]);
+
     if (currentQuestionIndex < questionnaire!.questions.length - 1)
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     else handleSubmit();
@@ -165,19 +176,21 @@ export const Questionnaire: React.FC = () => {
   };
 
   const getPrevAnswer = (questionId: number) =>
-    prevQuestionResponses.questionResponses.find(
+    prevResponses.find(
       (prevResponse: QuestionResponse) => prevResponse.questionId === questionId
     );
 
   const currentQuestion = questionnaire!.questions[currentQuestionIndex];
   const prevAnswer = getPrevAnswer(currentQuestion.id);
-
   const progress =
     ((currentQuestionIndex + 1) / questionnaire!.questions.length) * 100;
 
   const handleSubmit = () => {
+    // Trigger browser refresh to update already answered questionnaires
     APIClient.postQuestionResponse(answers).then(() => {
-      navigate("/questionnaire-home");
+      navigate("/questionnaire-home", {
+        state: { fromCompletion: true },
+      });
     });
   };
   return (

@@ -5,6 +5,7 @@ import { StyledEngineProvider } from "@mui/material/styles";
 import { customTheme } from "./customTheme";
 import { UserContextProvider } from "./context/UserContextProvider";
 import { QuestionnaireContextProvider } from "./context/QuestionnaireContextProvider";
+import { QuestionResponseContextProvider } from "./context/QuestionResponseContextProvider";
 
 export const App = () => {
   return (
@@ -13,7 +14,9 @@ export const App = () => {
         <CssBaseline />
         <UserContextProvider>
           <QuestionnaireContextProvider>
-            <Main />
+            <QuestionResponseContextProvider>
+              <Main />
+            </QuestionResponseContextProvider>
           </QuestionnaireContextProvider>
         </UserContextProvider>
       </ThemeProvider>

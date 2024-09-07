@@ -16,6 +16,7 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({
   const [userId, setUserId] = useState<string | null>(null);
 
   const login = (user: User) => {
+    logout();
     setUserId(user.id);
     new UserSession().saveUserId(user.id);
   };
