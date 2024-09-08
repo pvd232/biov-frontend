@@ -46,6 +46,17 @@ class APIC {
     }
     return response;
   };
+  fetchQuestionnaireStats = async () => {
+    const request = new Request(`${this.baseUrl}/questionnaire_stats`, {
+      method: "GET",
+      mode: this.mode,
+    });
+    const response = await fetch(request);
+    if (!response.ok) {
+      throw new Error("Failed to fetch questionnaires");
+    }
+    return response;
+  };
   postQuestionResponse = async (questionResponse: QuestionResponse[]) => {
     const request = new Request(`${this.baseUrl}/question_response`, {
       method: "POST",

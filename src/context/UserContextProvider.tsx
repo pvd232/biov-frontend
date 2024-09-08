@@ -14,25 +14,27 @@ export const UserContextProvider: React.FC<UserContextProviderProps> = ({
   children,
 }) => {
   const [userId, setUserId] = useState<string | null>(null);
-  const [role, setRole] = useState<"admin" | "non-admin">("non-admin");
+  const [role, setRole] = useState<"admin" | "non-admin" | null>(null);
 
   const login = (user: User) => {
     logout();
     setUserId(user.id);
     setRole(user.role);
     new UserSession().saveUserId(user.id);
+    new UserSession().saveUserRole(user.role);
   };
 
   const logout = () => {
     setUserId(null);
+    setRole("non-admin");
     new UserSession().clearUserId();
   };
 
   useEffect(() => {
     const userId = new UserSession().getUserId();
-    if (userId) {
-      setUserId(userId);
-    }
+    const role = new UserSession().getUserRole(); // Would not do this in production app
+    if (userId) setUserId(userId);
+    if (role) setRole(role);
   }, [userId]);
 
   return (

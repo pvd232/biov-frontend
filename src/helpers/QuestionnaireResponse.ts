@@ -1,12 +1,12 @@
-import { QuestionResponse } from "./QuestionResponse";
+import { AdminQuestionResponse } from "./AdminQuestionResponse";
 
 export class QuestionnaireResponse {
   questionnaireId: number;
-  questionResponses: QuestionResponse[];
+  questionResponses: AdminQuestionResponse[];
   constructor(data: { [key: string]: any }) {
     this.questionnaireId = data["questionnaire_id"];
     this.questionResponses = data["question_responses"].map(
-      (response: { [key: string]: any }) => new QuestionResponse(response)
+      (response: { [key: string]: any }) => new AdminQuestionResponse(response)
     );
   }
 }

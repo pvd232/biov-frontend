@@ -1,0 +1,9 @@
+.buttonContainer {
+  display: grid;
+  width: 100%;
+  justify-content: flex-end;
+  margin-top: 2vh;
+  .button {
+    border-radius: 30px;
+  }
+}

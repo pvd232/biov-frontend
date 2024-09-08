@@ -74,15 +74,17 @@ export const Questionnaire: React.FC = () => {
           }
         } else {
           // If the answer doesn't exist, create it with the selected option
-          updatedAnswers.push({
-            userId: userId,
-            questionId: questionId,
-            questionnaireId: Number(id),
-            type: answerType,
-            singleOptionId: null,
-            multiOptionIds: [multiOptionId],
-            shortAnswer: null,
-          });
+          updatedAnswers.push(
+            new QuestionResponse({
+              userId: userId,
+              questionId: questionId,
+              questionnaireId: Number(id),
+              type: answerType,
+              singleOptionId: null,
+              multiOptionIds: [multiOptionId],
+              shortAnswer: null,
+            })
+          );
         }
       }
 
@@ -94,15 +96,17 @@ export const Questionnaire: React.FC = () => {
         if (answerIndex > -1) {
           updatedAnswers[answerIndex].singleOptionId = singleOptionId;
         } else {
-          updatedAnswers.push({
-            userId: userId,
-            questionId: questionId,
-            questionnaireId: Number(id),
-            type: answerType,
-            singleOptionId: singleOptionId,
-            multiOptionIds: null,
-            shortAnswer: null,
-          });
+          updatedAnswers.push(
+            new QuestionResponse({
+              userId: userId,
+              questionId: questionId,
+              questionnaireId: Number(id),
+              type: answerType,
+              singleOptionId: singleOptionId,
+              multiOptionIds: null,
+              shortAnswer: null,
+            })
+          );
         }
       }
 
@@ -114,15 +118,17 @@ export const Questionnaire: React.FC = () => {
         if (answerIndex > -1) {
           updatedAnswers[answerIndex].shortAnswer = shortAnswer;
         } else {
-          updatedAnswers.push({
-            userId: userId,
-            questionId: questionId,
-            questionnaireId: Number(id),
-            type: answerType,
-            singleOptionId: null,
-            multiOptionIds: null,
-            shortAnswer: shortAnswer,
-          });
+          updatedAnswers.push(
+            new QuestionResponse({
+              userId: userId,
+              questionId: questionId,
+              questionnaireId: Number(id),
+              type: answerType,
+              singleOptionId: null,
+              multiOptionIds: null,
+              shortAnswer: shortAnswer,
+            })
+          );
         }
       }
       return updatedAnswers;

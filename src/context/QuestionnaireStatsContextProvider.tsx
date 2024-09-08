@@ -24,7 +24,7 @@ export const QuestionnaireStatsContextProvider: React.FC<
     setLoading(true);
     setError(null);
     try {
-      APIClient.fetchQuestionResponse(userId).then((response) => {
+      APIClient.fetchQuestionnaireStats().then((response) => {
         if (!response) {
           throw new Error("Failed to fetch question responses");
         }

@@ -9,16 +9,20 @@ import {
   TableRow,
   Paper,
   Typography,
+  Grid2,
 } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuestionnaires } from "../../../hooks/useQuestionnaires";
 import { useQuestionResponses } from "../../../hooks/useQuestionResponses";
-
+import { useUser } from "../../../context/UserContextProvider";
+import { BlackButton } from "../../shared/button/BlackButton";
+import styles from "./scss/QuestionnaireSelection.module.scss";
 export const QuestionnaireSelection: React.FC = () => {
   const { questionnaires, loading, error } = useQuestionnaires(); // Use the custom hook to get data from context
   const { questionResponses, refetch } = useQuestionResponses(); // Add refetch to update context
+  const userContext = useUser();
   const location = useLocation(); // Get the location object to access passed state
-
+  const navigate = useNavigate();
   // Check if the user navigated back from completing a questionnaire
   useEffect(() => {
     if (location.state && location.state.fromCompletion) {
@@ -55,6 +59,20 @@ export const QuestionnaireSelection: React.FC = () => {
 
   return (
     <Container>
+      <Grid2 className={styles.buttonContainer}>
+        <Grid2>
+          <BlackButton
+            variant="contained"
+            onClick={() => {
+              userContext?.logout();
+              navigate("/");
+            }}
+            className={styles.button}
+          >
+            Log out
+          </BlackButton>
+        </Grid2>
+      </Grid2>
       <h1>Questionnaires Dashboard</h1>
       <TableContainer component={Paper}>
         <Table>

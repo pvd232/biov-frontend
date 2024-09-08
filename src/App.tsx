@@ -3,13 +3,9 @@ import { ThemeProvider } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { StyledEngineProvider } from "@mui/material/styles";
 import { customTheme } from "./customTheme";
-import {
-  UserContext,
-  UserContextProvider,
-} from "./context/UserContextProvider";
+import { UserContextProvider, useUser } from "./context/UserContextProvider";
 import { QuestionnaireContextProvider } from "./context/QuestionnaireContextProvider";
 import { QuestionnaireStatsContextProvider } from "./context/QuestionnaireStatsContextProvider";
-import { useContext } from "react";
 import { QuestionResponseContextProvider } from "./context/QuestionResponseContextProvider";
 
 export const App = () => {
@@ -26,8 +22,7 @@ export const App = () => {
 };
 // Wrapper to conditionally load contexts based on user role
 const ConditionalContextWrapper = () => {
-  const { role } = useContext(UserContext)!; // Get user role from context
-  console.log("role", role);
+  const { role } = useUser();
 
   return role === "admin" ? (
     <AdminContextProviders />

@@ -15,7 +15,6 @@ type LoginParams = {
 export const Login: React.FC = () => {
   const { login } = useUser();
   const { role } = useParams<LoginParams>();
-  console.log("role", role);
   // State for the form inputs and errors
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -57,7 +56,7 @@ export const Login: React.FC = () => {
       <Grid container id="login-card" className={styles.loginCard}>
         <Grid id="login-card-content" container className={styles.loginContent}>
           <Grid container width={"80%"}>
-            <Typography variant={"h4"}>Welcome back</Typography>
+            <Typography variant={"h4"}>Welcome back, Boss</Typography>
           </Grid>
 
           {/* Username input */}
@@ -89,10 +88,28 @@ export const Login: React.FC = () => {
           )}
 
           {/* Login button */}
-          <Grid container width={"100%"} justifyContent={"center"}>
-            <BlackButton sx={{ width: "80%" }} onClick={handleLoginClick}>
-              Login
-            </BlackButton>
+          <Grid
+            container
+            width={"100%"}
+            alignItems={"center"}
+            flexDirection={"column"}
+          >
+            <Grid container width={"100%"} justifyContent={"center"}>
+              <BlackButton sx={{ width: "80%" }} onClick={handleLoginClick}>
+                Login
+              </BlackButton>
+            </Grid>
+            <Grid>
+              <h2>or</h2>
+            </Grid>
+            <Grid container width={"100%"} justifyContent={"center"}>
+              <BlackButton
+                sx={{ width: "80%" }}
+                onClick={() => navigate("/admin")}
+              >
+                Admin Login
+              </BlackButton>
+            </Grid>
           </Grid>
         </Grid>
       </Grid>
