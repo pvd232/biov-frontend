@@ -73,7 +73,6 @@ export const Questionnaire: React.FC = () => {
             updatedAnswers[answerIndex].multiOptionIds!.push(multiOptionId);
           }
         } else {
-          console.log("hi");
           // If the answer doesn't exist, create it with the selected option
           updatedAnswers.push(
             new QuestionResponse({
@@ -132,7 +131,6 @@ export const Questionnaire: React.FC = () => {
           );
         }
       }
-      console.log("updatedAnswers", updatedAnswers);
 
       return updatedAnswers;
     });
