@@ -26,10 +26,8 @@ const ConditionalContextWrapper = () => {
 
   return role === "admin" ? (
     <AdminContextProviders />
-  ) : role === "non-admin" ? (
-    <NonAdminContextProviders />
   ) : (
-    <ErrorScreen />
+    <NonAdminContextProviders />
   );
 };
 // Context providers for admin users
@@ -48,6 +46,3 @@ const NonAdminContextProviders = () => (
   </QuestionnaireContextProvider>
 );
 // Loading screen or fallback while determining user role
-
-// Error screen if role is unknown
-const ErrorScreen = () => <div>Error determining role</div>;
