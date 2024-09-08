@@ -11,13 +11,14 @@ export class QuestionResponse {
   shortAnswer: string | null;
 
   constructor(data: { [key: string]: any }) {
-    this.userId = data["user_id"];
-    this.questionId = data["question_id"];
-    this.questionnaireId = data["questionnaire_id"];
+    // Handle snake case and camel case
+    this.userId = data["user_id"] ?? data["userId"];
+    this.questionId = data["question_id"] ?? data["questionId"];
+    this.questionnaireId = data["questionnaire_id"] ?? data["questionnaireId"];
     this.type = data["type"];
-    this.multiOptionIds = data["multi_option_ids"];
-    this.singleOptionId = data["single_option_id"];
-    this.shortAnswer = data["short_answer"];
+    this.multiOptionIds = data["multi_option_ids"] ?? data["multiOptionIds"];
+    this.singleOptionId = data["single_option_id"] ?? data["singleOptionId"];
+    this.shortAnswer = data["short_answer"] ?? data["shortAnswer"];
   }
   getAnswer() {
     switch (this.type) {
