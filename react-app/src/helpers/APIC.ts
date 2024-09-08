@@ -9,10 +9,7 @@ class APIC {
 
   constructor() {
     // Host name will be localhost when running async tests in jest
-    if (
-      window.location.host === "localhost:3000" ||
-      window.location.host === "localhost"
-    ) {
+    if (window.location.host.includes("localhost")) {
       this.env = "debug";
       this.baseUrl = getBaseURL("api");
       this.frontEndBaseUrl = getBaseURL("frontend");
@@ -29,7 +26,10 @@ class APIC {
       method: "GET",
       mode: this.mode,
     });
+    console.log("request", request);
+
     const response = await fetch(request);
+    console.log("response", response);
     if (!response.ok) {
       throw new Error("Failed to fetch questionnaires");
     }
