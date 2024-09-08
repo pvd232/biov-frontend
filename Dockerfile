@@ -1,6 +1,6 @@
 # Build environment
 # Static React app
-FROM node:19.9.0-bullseye as react-build
+FROM node:22.8.0-bullseye as react-build
 
 # Copy react-app into the local directory in the container
 ADD /react-app .
