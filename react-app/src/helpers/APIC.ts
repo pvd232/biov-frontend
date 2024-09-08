@@ -18,7 +18,7 @@ class APIC {
       this.env = "production";
       this.baseUrl = getBaseURL("api");
       this.frontEndBaseUrl = getBaseURL("frontend");
-      this.mode = "same-origin";
+      this.mode = "cors";
     }
   }
   fetchQuestionnaires = async () => {
@@ -26,10 +26,7 @@ class APIC {
       method: "GET",
       mode: this.mode,
     });
-    console.log("request", request);
-
     const response = await fetch(request);
-    console.log("response", response);
     if (!response.ok) {
       throw new Error("Failed to fetch questionnaires");
     }
