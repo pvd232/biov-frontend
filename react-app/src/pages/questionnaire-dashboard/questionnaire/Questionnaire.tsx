@@ -44,19 +44,23 @@ export const Questionnaire: React.FC = () => {
 
   useEffect(() => {
     const uniqueQuestionIds = new Set<number>();
-    for (const response of prevResponses) {
-      if (!uniqueQuestionIds.has(response.questionId))
-        uniqueQuestionIds.add(response.questionId);
-    }
-    if (prevResponses) {
+    if (prevResponses && questionnaire) {
+      for (const question of questionnaire.questions) {
+        if (!uniqueQuestionIds.has(question.id))
+          uniqueQuestionIds.add(question.id);
+      }
+
       const newAnswers = new Map<number, QuestionResponse>();
       prevResponses.forEach((response) => {
-        if (uniqueQuestionIds.has(response.questionId))
-          newAnswers.set(response.questionId, response);
+        if (uniqueQuestionIds.has(response.questionId)) {
+          const copiedResponse = new QuestionResponse(response);
+          copiedResponse.questionnaireId = Number(id);
+          newAnswers.set(response.questionId, copiedResponse);
+        }
       });
       setAnswers(newAnswers);
     }
-  }, [prevResponses]);
+  }, [prevResponses, id, questionnaire]);
 
   const handleAnswerChange = (
     questionId: number,

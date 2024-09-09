@@ -29,17 +29,41 @@ export const AdminModal: React.FC<AdminModalProps> = (props) => {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell>Username: {`${props.qStat.userId}`}</TableCell>
                   <TableCell>
-                    Questionnaires completed: {`${props.qStat.count}`}
+                    <b>Username:</b> {`${props.qStat.userId}`}
+                  </TableCell>
+                  <TableCell>
+                    <b>Questionnaires completed:</b> {`${props.qStat.count}`}
                   </TableCell>
                 </TableRow>
                 <>
                   {props.qStat.questionnaireResponses.map((qNairRes) =>
                     qNairRes.questionResponses.map((qResponse) => (
-                      <TableRow>
-                        <TableCell>Q: {qResponse.questionText}</TableCell>
-                        <TableCell>A: {qResponse.getAnswerValue()}</TableCell>
+                      <TableRow
+                        key={
+                          "tableRow" +
+                          qResponse.questionId.toString() +
+                          qResponse.questionnaireId.toString()
+                        }
+                      >
+                        <TableCell
+                          key={
+                            "tableCell1" +
+                            qResponse.questionId.toString() +
+                            qResponse.questionnaireId.toString()
+                          }
+                        >
+                          Q: {qResponse.questionText}
+                        </TableCell>
+                        <TableCell
+                          key={
+                            "tableCell2" +
+                            qResponse.questionId.toString() +
+                            qResponse.questionnaireId.toString()
+                          }
+                        >
+                          A: {qResponse.getAnswerValue()}
+                        </TableCell>
                       </TableRow>
                     ))
                   )}

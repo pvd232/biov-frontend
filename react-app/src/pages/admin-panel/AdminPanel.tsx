@@ -4,6 +4,7 @@ import {
   Grid2,
   Paper,
   Table,
+  TableBody,
   TableCell,
   TableContainer,
   TableHead,
@@ -49,15 +50,17 @@ export const AdminPanel = () => {
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
-          {questionnaireStats.map((questionnaireStat: QuestionnaireStat) => (
-            <TableRow>
-              <TableCell>{questionnaireStat.userId}</TableCell>
-              <TableCell>{questionnaireStat.count}</TableCell>
-              <TableCell>
-                <AdminModal qStat={questionnaireStat}></AdminModal>
-              </TableCell>
-            </TableRow>
-          ))}
+          <TableBody>
+            {questionnaireStats.map((questionnaireStat: QuestionnaireStat) => (
+              <TableRow key={questionnaireStat.userId}>
+                <TableCell>{questionnaireStat.userId}</TableCell>
+                <TableCell>{questionnaireStat.count}</TableCell>
+                <TableCell>
+                  <AdminModal qStat={questionnaireStat}></AdminModal>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </Table>
       </TableContainer>
     </Container>
