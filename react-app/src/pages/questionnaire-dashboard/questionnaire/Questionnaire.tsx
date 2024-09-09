@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Typography,
@@ -32,13 +32,31 @@ export const Questionnaire: React.FC = () => {
   const prevResponses = useQuestionResponses().questionResponses;
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [answers, setAnswers] = useState<QuestionResponse[]>([]);
+  const [answers, setAnswers] = useState<Map<number, QuestionResponse>>(
+    new Map()
+  );
   const [errors, setErrors] = useState<Record<number, string>>({});
   const [loading, setLoading] = useState<boolean>(false);
 
   // Find the questionnaire using the ID from the URL after ensuring hooks are defined
   const location = useLocation();
   const questionnaire = location.state?.questionnaire;
+
+  useEffect(() => {
+    const uniqueQuestionIds = new Set<number>();
+    for (const response of prevResponses) {
+      if (!uniqueQuestionIds.has(response.questionId))
+        uniqueQuestionIds.add(response.questionId);
+    }
+    if (prevResponses) {
+      const newAnswers = new Map<number, QuestionResponse>();
+      prevResponses.forEach((response) => {
+        if (uniqueQuestionIds.has(response.questionId))
+          newAnswers.set(response.questionId, response);
+      });
+      setAnswers(newAnswers);
+    }
+  }, [prevResponses]);
 
   const handleAnswerChange = (
     questionId: number,
@@ -48,35 +66,36 @@ export const Questionnaire: React.FC = () => {
     shortAnswer: string | null
   ) => {
     setAnswers((prevAnswers) => {
-      const answerIndex = prevAnswers.findIndex(
-        (answer) => answer.questionId === questionId
-      );
+      const relevantAnswer = prevAnswers.get(questionId);
 
       // Clone the answers to avoid mutating state directly, will return empty array if there are no answers
-      const updatedAnswers: QuestionResponse[] = [...prevAnswers];
+      const updatedAnswers: Map<number, QuestionResponse> = new Map(
+        prevAnswers
+      );
 
       // Handle multi select questions
       if (
         answerType === QuestionCategory.MultipleChoiceSelectAll &&
         multiOptionId !== null
       ) {
-        if (answerIndex > -1 && updatedAnswers[answerIndex].multiOptionIds) {
+        if (relevantAnswer && relevantAnswer.multiOptionIds) {
           // Check if option is already selected
           const optionIndex =
-            updatedAnswers[answerIndex].multiOptionIds!.indexOf(multiOptionId);
-
+            relevantAnswer.multiOptionIds!.indexOf(multiOptionId);
           if (optionIndex > -1) {
             // Remove the option if it's already selected
-            updatedAnswers[answerIndex].multiOptionIds = updatedAnswers[
-              answerIndex
-            ].multiOptionIds!.filter((id) => id !== multiOptionId);
+            relevantAnswer.multiOptionIds =
+              relevantAnswer.multiOptionIds!.filter(
+                (id) => id !== multiOptionId
+              );
           } else {
             // Add the option if it's not already selected
-            updatedAnswers[answerIndex].multiOptionIds!.push(multiOptionId);
+            relevantAnswer.multiOptionIds!.push(multiOptionId);
           }
         } else {
           // If the answer doesn't exist, create it with the selected option
-          updatedAnswers.push(
+          updatedAnswers.set(
+            questionId,
             new QuestionResponse({
               userId: userId,
               questionId: questionId,
@@ -95,10 +114,11 @@ export const Questionnaire: React.FC = () => {
         answerType === QuestionCategory.MultipleChoice &&
         singleOptionId != null
       ) {
-        if (answerIndex > -1) {
-          updatedAnswers[answerIndex].singleOptionId = singleOptionId;
+        if (relevantAnswer) {
+          relevantAnswer.singleOptionId = singleOptionId;
         } else {
-          updatedAnswers.push(
+          updatedAnswers.set(
+            questionId,
             new QuestionResponse({
               userId: userId,
               questionId: questionId,
@@ -117,10 +137,11 @@ export const Questionnaire: React.FC = () => {
         answerType === QuestionCategory.ShortAnswer &&
         shortAnswer != null
       ) {
-        if (answerIndex > -1) {
-          updatedAnswers[answerIndex].shortAnswer = shortAnswer;
+        if (relevantAnswer) {
+          relevantAnswer.shortAnswer = shortAnswer;
         } else {
-          updatedAnswers.push(
+          updatedAnswers.set(
+            questionId,
             new QuestionResponse({
               userId: userId,
               questionId: questionId,
@@ -145,8 +166,9 @@ export const Questionnaire: React.FC = () => {
 
   // No empty answers or white space only answers
   const validateAnswer = (questionId: number) => {
-    const answer = answers[questionId] || "";
+    const answer = answers.get(questionId);
     if (
+      answer &&
       answer.type === QuestionCategory.ShortAnswer &&
       (answer.shortAnswer === null || answer.shortAnswer.trim().length === 0)
     ) {
@@ -169,10 +191,6 @@ export const Questionnaire: React.FC = () => {
     )
       return; // Prevent moving to the next question if validation fails
 
-    // If the user did not change their answer, add it to the answers array
-    if (answers.length === currentQuestionIndex && prevAnswer)
-      setAnswers((prev) => [...prev, prevAnswer]);
-
     if (currentQuestionIndex < questionnaire!.questions.length - 1)
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     else handleSubmit();
@@ -183,20 +201,17 @@ export const Questionnaire: React.FC = () => {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
   };
 
-  const getPrevAnswer = (questionId: number) =>
-    prevResponses.find(
-      (prevResponse: QuestionResponse) => prevResponse.questionId === questionId
-    );
-
   const currentQuestion = questionnaire!.questions[currentQuestionIndex];
-  const prevAnswer = getPrevAnswer(currentQuestion.id);
+
   const progress =
     ((currentQuestionIndex + 1) / questionnaire!.questions.length) * 100;
 
   const handleSubmit = () => {
     setLoading(true);
-    // Trigger browser refresh to update already answered questionnaires
-    APIClient.postQuestionResponse(answers).then(() => {
+
+    // Convert answers map to array
+    const answersArray = Array.from(answers).map(([key, value]) => value);
+    APIClient.postQuestionResponse(answersArray).then(() => {
       setLoading(false);
       navigate("/questionnaire-home", {
         state: { fromCompletion: true },
@@ -213,11 +228,7 @@ export const Questionnaire: React.FC = () => {
         <Box mt={2}>
           {currentQuestion.type === QuestionCategory.MultipleChoice ? (
             <RadioGroup
-              value={
-                prevAnswer?.singleOptionId ||
-                answers[currentQuestionIndex]?.singleOptionId ||
-                ""
-              }
+              value={answers.get(currentQuestion.id)?.singleOptionId || ""}
               onChange={(e) =>
                 handleAnswerChange(
                   currentQuestion.id,
@@ -245,11 +256,9 @@ export const Questionnaire: React.FC = () => {
                 control={
                   <Checkbox
                     checked={
-                      prevAnswer?.multiOptionIds?.includes(option.id) ||
-                      answers[currentQuestionIndex]?.multiOptionIds?.includes(
-                        option.id
-                      ) ||
-                      false
+                      answers
+                        .get(currentQuestion.id)
+                        ?.multiOptionIds?.includes(option.id) || false
                     }
                     onChange={() =>
                       handleAnswerChange(
@@ -269,11 +278,7 @@ export const Questionnaire: React.FC = () => {
             <TextField
               variant="outlined"
               fullWidth
-              value={
-                prevAnswer?.shortAnswer ||
-                answers[currentQuestionIndex]?.shortAnswer ||
-                ""
-              }
+              value={answers.get(currentQuestion.id)?.shortAnswer || ""}
               onChange={(e) => {
                 handleAnswerChange(
                   currentQuestion.id,
