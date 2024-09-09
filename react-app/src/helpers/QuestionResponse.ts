@@ -12,13 +12,25 @@ export class QuestionResponse {
 
   constructor(data: { [key: string]: any }) {
     // Handle snake case and camel case
-    this.userId = data["user_id"] ?? data["userId"];
-    this.questionId = data["question_id"] ?? data["questionId"];
-    this.questionnaireId = data["questionnaire_id"] ?? data["questionnaireId"];
+    this.userId = this.getValue(data, "user_id", "userId");
+    this.questionId = this.getValue(data, "question_id", "questionId");
+    this.questionnaireId = this.getValue(
+      data,
+      "questionnaire_id",
+      "questionnaireId"
+    );
     this.type = data["type"];
-    this.multiOptionIds = data["multi_option_ids"] ?? data["multiOptionIds"];
-    this.singleOptionId = data["single_option_id"] ?? data["singleOptionId"];
-    this.shortAnswer = data["short_answer"] ?? data["shortAnswer"];
+    this.multiOptionIds = this.getValue(
+      data,
+      "multi_option_ids",
+      "multiOptionIds"
+    );
+    this.singleOptionId = this.getValue(
+      data,
+      "single_option_id",
+      "singleOptionId"
+    );
+    this.shortAnswer = this.getValue(data, "short_answer", "shortAnswer");
   }
   getAnswer() {
     switch (this.type) {
@@ -29,5 +41,8 @@ export class QuestionResponse {
       case QuestionCategory.ShortAnswer:
         return this.shortAnswer;
     }
+  }
+  getValue(data: { [key: string]: any }, snakeKey: string, camelKey: string) {
+    return data[snakeKey] !== undefined ? data[snakeKey] : data[camelKey];
   }
 }

@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid2";
 import styles from "./scss/Login.module.scss";
 import { CustomTextField } from "../../shared/custom-text-field/CustomTextField";
 import { BlackButton } from "../../shared/button/BlackButton";
-import { Container, Typography } from "@mui/material";
+import { CircularProgress, Container, Typography } from "@mui/material";
 import { useUser } from "../../../hooks/useUser";
 import { useNavigate, useParams } from "react-router-dom";
 import { User } from "../../../types/domains/User";
@@ -20,8 +20,10 @@ export const Login: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [admin, setAdmin] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
   const handleLoginClick = () => {
+    setLoading(true);
     // Trim input values to remove leading/trailing whitespace
     const trimmedUsername = username.trim();
     const trimmedPassword = password.trim();
@@ -39,6 +41,7 @@ export const Login: React.FC = () => {
       role: role ?? "non-admin",
     };
     APIClient.authenticateUser(user).then((response) => {
+      setLoading(false);
       if (!response) {
         setError("Invalid username or password.");
         return;
@@ -98,9 +101,13 @@ export const Login: React.FC = () => {
             flexDirection={"column"}
           >
             <Grid container width={"100%"} justifyContent={"center"}>
-              <BlackButton sx={{ width: "80%" }} onClick={handleLoginClick}>
-                Login
-              </BlackButton>
+              {loading ? (
+                <CircularProgress size={24}></CircularProgress>
+              ) : (
+                <BlackButton sx={{ width: "80%" }} onClick={handleLoginClick}>
+                  Login
+                </BlackButton>
+              )}
             </Grid>
             <Grid>
               <h2>or</h2>

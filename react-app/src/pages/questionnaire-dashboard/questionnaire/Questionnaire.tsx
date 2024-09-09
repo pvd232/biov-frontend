@@ -10,6 +10,7 @@ import {
   LinearProgress,
   Box,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import { useLocation, useParams } from "react-router-dom";
 import { QuestionCategory } from "../../../types/enums/QuestionCategory";
@@ -33,6 +34,7 @@ export const Questionnaire: React.FC = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<QuestionResponse[]>([]);
   const [errors, setErrors] = useState<Record<number, string>>({});
+  const [loading, setLoading] = useState<boolean>(false);
 
   // Find the questionnaire using the ID from the URL after ensuring hooks are defined
   const location = useLocation();
@@ -131,7 +133,6 @@ export const Questionnaire: React.FC = () => {
           );
         }
       }
-
       return updatedAnswers;
     });
     // Reset error if there was one
@@ -193,8 +194,10 @@ export const Questionnaire: React.FC = () => {
     ((currentQuestionIndex + 1) / questionnaire!.questions.length) * 100;
 
   const handleSubmit = () => {
+    setLoading(true);
     // Trigger browser refresh to update already answered questionnaires
     APIClient.postQuestionResponse(answers).then(() => {
+      setLoading(false);
       navigate("/questionnaire-home", {
         state: { fromCompletion: true },
       });
@@ -296,9 +299,13 @@ export const Questionnaire: React.FC = () => {
         >
           Previous
         </Button>
-        <Button variant="contained" onClick={handleNext}>
-          Next
-        </Button>
+        {loading ? (
+          <CircularProgress size={24}></CircularProgress>
+        ) : (
+          <Button variant="contained" onClick={handleNext}>
+            Next
+          </Button>
+        )}
       </Box>
       <Box mt={4}>
         <LinearProgress variant="determinate" value={progress} />
