@@ -17,6 +17,21 @@
       padding-left: 40px;
       padding-right: 40px;
       row-gap: 3vh;
+      .gridContainer {
+        width: 100%;
+        justify-content: center;
+      }
+      .width80 {
+        width: 80%;
+      }
+      .loginButtonContainer {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+      }
+      .changeRoleButton {
+        background-color: blue;
+      }
     }
   }
 }

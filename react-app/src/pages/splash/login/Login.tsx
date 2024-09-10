@@ -10,7 +10,7 @@ import { User } from "../../../types/domains/User";
 import { APIClient } from "../../../helpers/APIC";
 
 type LoginParams = {
-  role: "admin" | undefined;
+  role: "admin" | "non-admin" | undefined;
 };
 export const Login: React.FC = () => {
   const { login } = useUser();
@@ -22,9 +22,9 @@ export const Login: React.FC = () => {
   const [admin, setAdmin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+
   const handleLoginClick = () => {
     setLoading(true);
-    // Trim input values to remove leading/trailing whitespace
     const trimmedUsername = username.trim();
     const trimmedPassword = password.trim();
 
@@ -46,10 +46,10 @@ export const Login: React.FC = () => {
         setError("Invalid username or password.");
         return;
       } else if (user.role === "non-admin") {
-        login(user); // Set the user in context after a successful login
+        login(user);
         navigate("/questionnaire-home");
       } else if (user.role === "admin") {
-        login(user); // Set the user in context after a successful login
+        login(user);
         navigate("/admin-home");
       }
     });
@@ -59,16 +59,16 @@ export const Login: React.FC = () => {
     <Container className={styles.pageContainer} id="page-container">
       <Grid container id="login-card" className={styles.loginCard}>
         <Grid id="login-card-content" container className={styles.loginContent}>
-          <Grid container width={"80%"}>
+          <Grid container className={styles.width80}>
             <Typography variant={"h4"}>
               {admin ? "Welcome back, Boss" : "Welcome back"}
             </Typography>
           </Grid>
 
           {/* Username input */}
-          <Grid container width={"100%"} justifyContent={"center"}>
+          <Grid container className={styles.gridContainer}>
             <CustomTextField
-              sx={{ width: "80%" }}
+              className={styles.width80}
               label={"Username"}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
@@ -76,9 +76,9 @@ export const Login: React.FC = () => {
           </Grid>
 
           {/* Password input */}
-          <Grid container width={"100%"} justifyContent={"center"}>
+          <Grid container className={styles.gridContainer}>
             <CustomTextField
-              sx={{ width: "80%" }}
+              className={styles.width80}
               label={"Password"}
               type="password"
               value={password}
@@ -88,23 +88,21 @@ export const Login: React.FC = () => {
 
           {/* Error message */}
           {error && (
-            <Grid container width={"100%"} justifyContent={"center"}>
+            <Grid container className={styles.gridContainer}>
               <Typography color="error">{error}</Typography>
             </Grid>
           )}
 
           {/* Login button */}
-          <Grid
-            container
-            width={"100%"}
-            alignItems={"center"}
-            flexDirection={"column"}
-          >
-            <Grid container width={"100%"} justifyContent={"center"}>
+          <Grid container className={styles.loginButtonContainer}>
+            <Grid container className={styles.gridContainer}>
               {loading ? (
                 <CircularProgress size={24}></CircularProgress>
               ) : (
-                <BlackButton sx={{ width: "80%" }} onClick={handleLoginClick}>
+                <BlackButton
+                  className={styles.width80}
+                  onClick={handleLoginClick}
+                >
                   Login
                 </BlackButton>
               )}
@@ -112,9 +110,10 @@ export const Login: React.FC = () => {
             <Grid>
               <h2>or</h2>
             </Grid>
-            <Grid container width={"100%"} justifyContent={"center"}>
+            <Grid container className={styles.gridContainer}>
               <BlackButton
-                sx={{ width: "80%", backgroundColor: "blue" }}
+                className={styles.width80 + " " + styles.changeRoleButton}
+                sx={{ backgroundColor: "blue" }}
                 onClick={() => {
                   if (admin) {
                     setAdmin(false);

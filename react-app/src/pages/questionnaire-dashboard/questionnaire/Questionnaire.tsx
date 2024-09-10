@@ -295,7 +295,7 @@ export const Questionnaire: React.FC = () => {
                   e.target.value
                 );
               }}
-              error={!!errors[currentQuestion.id]}
+              error={errors[currentQuestion.id] ? true : false}
               helperText={errors[currentQuestion.id]}
               required={true}
             />
