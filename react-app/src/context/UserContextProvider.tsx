@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { UserContextProviderProps } from "../types/context/UserContextProviderProps";
 import { UserContextType } from "../types/context/UserContextType";
 import { User } from "../types/domains/User";
-import { UserSession } from "./UserSession";
+import { UserSession } from "../helpers/UserSession";
 
 // Create the UserContext with default values
 export const UserContext = createContext<UserContextType | undefined>(

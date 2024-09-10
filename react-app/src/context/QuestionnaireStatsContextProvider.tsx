@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { APIClient } from "../helpers/APIC";
-import { UserSession } from "./UserSession";
+import { UserSession } from "../helpers/UserSession";
 import { useUser } from "../hooks/useUser";
 import { QuestionnaireStatsContextType } from "../types/context/QuestionnaireStatsContextType";
 import { QuestionnaireStatsContextProviderProps } from "../types/context/QuestionnaireStatsContextProviderProps";

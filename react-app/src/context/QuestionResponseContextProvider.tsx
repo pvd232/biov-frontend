@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect, useCallback } from "react";
 import { QuestionResponseContextType } from "../types/context/QuestionResponseContextType";
 import { QuestionResponseContextProviderProps } from "../types/context/QuestionResponseContextProviderProps";
 import { APIClient } from "../helpers/APIC";
-import { UserSession } from "./UserSession";
+import { UserSession } from "../helpers/UserSession";
 import { QuestionResponse } from "../helpers/QuestionResponse";
 import { useUser } from "../hooks/useUser";
 
