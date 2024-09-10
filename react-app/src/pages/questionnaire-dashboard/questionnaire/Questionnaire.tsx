@@ -43,8 +43,10 @@ export const Questionnaire: React.FC = () => {
   const questionnaire = location.state?.questionnaire;
 
   useEffect(() => {
+    // Check previous responses to see if there are any answers to pre-fill
     const uniqueQuestionIds = new Set<number>();
     if (prevResponses && questionnaire) {
+      // Get all unique question IDs in the questionnaire
       for (const question of questionnaire.questions) {
         if (!uniqueQuestionIds.has(question.id))
           uniqueQuestionIds.add(question.id);
@@ -52,6 +54,7 @@ export const Questionnaire: React.FC = () => {
 
       const newAnswers = new Map<number, QuestionResponse>();
       prevResponses.forEach((response) => {
+        // Check if the response questionId is in the current questionnaire
         if (uniqueQuestionIds.has(response.questionId)) {
           const copiedResponse = new QuestionResponse(response);
           copiedResponse.questionnaireId = Number(id);
